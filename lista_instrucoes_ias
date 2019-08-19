@@ -1,0 +1,21 @@
+0A - LOAD MQ
+09 - LOAD MQ,M(X)
+21 - STOR M(X)
+01 - LOAD M(X)
+02 - LOAD -M(X)
+03 - LOAD |M(X)|
+0D - JUMP M(X,0:19)
+0E - JUMP M(X,20:39)
+0F - JUMP+M(X,0:19)
+10 - JUMP+M(X,20:39)
+05 - ADD M(X)
+07 - ADD |M(X)|
+06 - SUB M(X)
+08 - SUB |M(X)|
+0B - MUL M(X)
+0C - DIV M(X)
+14 - LSH
+15 - RSH
+12 - STOR M(X,8:19)
+13 - STOR M(X,28:39)
+

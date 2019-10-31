@@ -1,0 +1,47 @@
+Quando estamos mostrando a linha dessa forma:
+
+    _start () at ra185137-lab6.s:6
+    6	    li a0, 0
+
+Então ainda não estamos executando.
+
+Para termos um depurador mais visual e de fácil leitura, podemos executar:
+
+    tui enable
+
+Mas o keybinding dele fica diferente. 
+
+    https://sourceware.org/gdb/current/onlinedocs/gdb/TUI-Keys.html
+
+Também podemos mostrar dentro tui o comando "layout" para mostrarmos os valores dos registradores inline
+
+    layout regs
+
+    https://ftp.gnu.org/old-gnu/Manuals/gdb/html_chapter/gdb_19.html
+
+Examinando memória:
+    x/8Xb addr
+    x/8db addr
+    x/4w $sp
+
+Breakpoint:
+    b rotulo
+    continue
+
+Step: Ele executa linha a linha do programa e entra no jal
+    s
+
+Next: Análogo ao step, mas não acompanha o processo iterativo do jal
+    n
+
+Finish:
+    Durante o processo iterativo do jal, como  finish, você pode sair dele. Quando o valor de ra vai para pc
+    f
+
+Printf:
+    printf "%d, %s, %s", 5. $sp, string
+
+
+set:
+    Definir o valor do registrador no gdb inline
+    set $a0=19

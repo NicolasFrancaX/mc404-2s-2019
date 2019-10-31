@@ -1,0 +1,308 @@
+Parametros para: parte2
+COMPILAR? 1 	 EXECUTAR? 1 	 TESTAR? 1 	 LIMPAR? 1
+Limpando arquivos...
+rm -f ./bin/*.x
+rm -f ./src/*.o
+Compilando arquivos para parte2
+cp ./aux/main2.c ./src/main.c
+gcc -std=c99 -Wall -Werror -g -O0 -o ./bin/montador-p2.x ./src/*.c -lm
+Executando testes para parte2
+**************** EXECUTANDO ENTRADA arq00.in (parte2) **************** 
+  Saida em ./saidas/arq00.parte2
+
+**************** EXECUTANDO ENTRADA arq01.in (parte2) **************** 
+  Saida em ./saidas/arq01.parte2
+
+**************** EXECUTANDO ENTRADA arq02.in (parte2) **************** 
+  Saida em ./saidas/arq02.parte2
+
+**************** EXECUTANDO ENTRADA arq03.in (parte2) **************** 
+  Saida em ./saidas/arq03.parte2
+
+**************** EXECUTANDO ENTRADA arq04.in (parte2) **************** 
+  Saida em ./saidas/arq04.parte2
+
+**************** EXECUTANDO ENTRADA arq05.in (parte2) **************** 
+  Saida em ./saidas/arq05.parte2
+
+**************** EXECUTANDO ENTRADA arq06.in (parte2) **************** 
+  Saida em ./saidas/arq06.parte2
+
+**************** EXECUTANDO ENTRADA arq07.in (parte2) **************** 
+  Saida em ./saidas/arq07.parte2
+
+**************** EXECUTANDO ENTRADA arq08.in (parte2) **************** 
+  Saida em ./saidas/arq08.parte2
+
+**************** EXECUTANDO ENTRADA arq09.in (parte2) **************** 
+  Saida em ./saidas/arq09.parte2
+
+**************** EXECUTANDO ENTRADA arq10.in (parte2) **************** 
+  Saida em ./saidas/arq10.parte2
+
+**************** EXECUTANDO ENTRADA arq11.in (parte2) **************** 
+  Saida em ./saidas/arq11.parte2
+
+**************** EXECUTANDO ENTRADA arq12.in (parte2) **************** 
+  Saida em ./saidas/arq12.parte2
+
+**************** EXECUTANDO ENTRADA arq13.in (parte2) **************** 
+  Saida em ./saidas/arq13.parte2
+
+**************** EXECUTANDO ENTRADA arq14.in (parte2) **************** 
+  Saida em ./saidas/arq14.parte2
+
+**************** EXECUTANDO ENTRADA arq15.in (parte2) **************** 
+  Saida em ./saidas/arq15.parte2
+
+**************** EXECUTANDO ENTRADA arq16.in (parte2) **************** 
+  Saida em ./saidas/arq16.parte2
+
+**************** EXECUTANDO ENTRADA arq17.in (parte2) **************** 
+  Saida em ./saidas/arq17.parte2
+
+**************** EXECUTANDO ENTRADA arq18.in (parte2) **************** 
+  Saida em ./saidas/arq18.parte2
+
+**************** EXECUTANDO ENTRADA arq19.in (parte2) **************** 
+  Saida em ./saidas/arq19.parte2
+
+**************** EXECUTANDO ENTRADA arq20.in (parte2) **************** 
+  Saida em ./saidas/arq20.parte2
+
+**************** EXECUTANDO ENTRADA arq21.in (parte2) **************** 
+  Saida em ./saidas/arq21.parte2
+
+**************** EXECUTANDO ENTRADA arq22.in (parte2) **************** 
+  Saida em ./saidas/arq22.parte2
+
+Realizando testes para parte2
+**************** TESTANDO SAIDA ./saidas/arq00.parte2 (parte2) **************** 
+  Resultados em tests.results
+							      >	000 00 000 00 010
+							      >	001 00 000 00 00A
+							      >	002 00 000 00 00A
+							      >	003 00 000 00 00A
+---------------- ERRO NA SAIDA arq00.parte2 ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq01.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO LEXICO: palavra inválida na linha 2!			ERRO LEXICO: palavra inválida na linha 2!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq02.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO LEXICO: palavra inválida na linha 3!			ERRO LEXICO: palavra inválida na linha 3!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq03.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO LEXICO: palavra inválida na linha 4!			ERRO LEXICO: palavra inválida na linha 4!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq04.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO LEXICO: palavra inválida na linha 3!			ERRO LEXICO: palavra inválida na linha 3!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq05.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO LEXICO: palavra inválida na linha 1!			ERRO LEXICO: palavra inválida na linha 1!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq06.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO LEXICO: palavra inválida na linha 6!			ERRO LEXICO: palavra inválida na linha 6!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq07.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO LEXICO: palavra inválida na linha 2!			ERRO LEXICO: palavra inválida na linha 2!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq08.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO LEXICO: palavra inválida na linha 3!			ERRO LEXICO: palavra inválida na linha 3!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq09.parte2 (parte2) **************** 
+  Resultados em tests.results
+							      >	000 00 000 00 010
+							      >	001 00 000 00 123
+							      >	100 01 001 06 000
+---------------- ERRO NA SAIDA arq09.parte2 ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq10.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO GRAMATICAL: palavra na linha 2!				ERRO GRAMATICAL: palavra na linha 2!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq11.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO GRAMATICAL: palavra na linha 3!				ERRO GRAMATICAL: palavra na linha 3!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq12.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO GRAMATICAL: palavra na linha 1!				ERRO GRAMATICAL: palavra na linha 1!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq13.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO GRAMATICAL: palavra na linha 6!				ERRO GRAMATICAL: palavra na linha 6!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq14.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO GRAMATICAL: palavra na linha 3!				ERRO GRAMATICAL: palavra na linha 3!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq15.parte2 (parte2) **************** 
+  Resultados em tests.results
+ERRO GRAMATICAL: palavra na linha 9!				ERRO GRAMATICAL: palavra na linha 9!
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq16.parte2 (parte2) **************** 
+  Resultados em tests.results
+							      >	200 00 000 00 014
+							      >	201 00 000 00 014
+							      >	202 00 000 00 014
+							      >	203 00 000 00 014
+							      >	204 00 000 00 014
+							      >	205 00 000 00 014
+							      >	206 00 000 00 014
+							      >	207 00 000 00 014
+							      >	208 00 000 00 014
+							      >	209 00 000 00 014
+							      >	20A 00 000 00 014
+							      >	20B 00 000 00 014
+							      >	20C 00 000 00 014
+							      >	20D 00 000 00 014
+							      >	20E 00 000 00 014
+							      >	20F 00 000 00 014
+							      >	210 00 000 00 014
+							      >	211 00 000 00 014
+							      >	212 00 000 00 014
+							      >	213 00 000 00 014
+							      >	214 00 000 00 014
+							      >	215 00 000 00 014
+							      >	216 00 000 00 014
+							      >	217 00 000 00 014
+							      >	218 00 000 00 014
+							      >	219 00 000 00 014
+							      >	21A 00 000 00 014
+							      >	21B 00 000 00 014
+							      >	21C 00 000 00 014
+							      >	21D 00 000 00 014
+							      >	21E 00 000 00 014
+							      >	21F 00 000 00 014
+							      >	220 00 000 00 014
+							      >	221 00 000 00 014
+							      >	222 00 000 00 014
+							      >	223 00 000 00 014
+							      >	224 00 000 00 014
+							      >	225 00 000 00 014
+							      >	226 00 000 00 014
+							      >	227 00 000 00 014
+---------------- ERRO NA SAIDA arq16.parte2 ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq17.parte2 (parte2) **************** 
+  Resultados em tests.results
+---------------- OK. PARABENS ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq18.parte2 (parte2) **************** 
+  Resultados em tests.results
+							      >	ERRO: Rótulo ou símbolo usado mas não definido: k
+---------------- ERRO NA SAIDA arq18.parte2 ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq19.parte2 (parte2) **************** 
+  Resultados em tests.results
+							      >	ERRO: Rótulo ou símbolo usado mas não definido: var_desconhec
+---------------- ERRO NA SAIDA arq19.parte2 ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq20.parte2 (parte2) **************** 
+  Resultados em tests.results
+							      >	100 00 000 00 009
+							      >	101 00 000 00 009
+							      >	102 00 000 00 009
+							      >	103 00 000 00 009
+							      >	104 00 000 00 009
+							      >	105 00 000 00 009
+							      >	106 00 000 00 009
+							      >	107 00 000 00 009
+							      >	108 00 000 00 009
+							      >	109 00 000 00 009
+							      >	10A 00 000 00 009
+							      >	10B 00 000 00 009
+							      >	10C 00 000 00 009
+							      >	10D 00 000 00 009
+							      >	10E 00 000 00 009
+							      >	10F 00 000 00 009
+							      >	110 00 000 00 009
+							      >	111 00 000 00 009
+							      >	112 00 000 00 009
+							      >	113 00 000 00 009
+							      >	200 00 000 00 0FF
+							      >	201 00 000 00 0FF
+							      >	202 00 000 00 0FF
+							      >	203 00 000 00 0FF
+							      >	204 00 000 00 0FF
+							      >	205 00 000 00 0FF
+							      >	206 00 000 00 0FF
+							      >	207 00 000 00 0FF
+							      >	208 00 000 00 0FF
+							      >	209 00 000 00 0FF
+							      >	20A 00 000 00 0FF
+							      >	20B 00 000 00 0FF
+							      >	20C 00 000 00 0FF
+							      >	20D 00 000 00 0FF
+							      >	20E 00 000 00 0FF
+							      >	220 01 200 05 064
+							      >	221 06 064 00 000
+---------------- ERRO NA SAIDA arq20.parte2 ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq21.parte2 (parte2) **************** 
+  Resultados em tests.results
+							      >	300 00 000 00 001
+							      >	310 00 000 00 12C
+							      >	311 00 000 00 12C
+							      >	312 00 000 00 12C
+							      >	313 00 000 00 12C
+							      >	314 00 000 00 12C
+							      >	315 00 000 00 12C
+							      >	316 00 000 00 12C
+							      >	317 00 000 00 12C
+							      >	318 00 000 00 12C
+							      >	319 00 000 00 12C
+							      >	31A 00 000 00 12C
+							      >	31B 00 000 00 12C
+							      >	31C 00 000 00 12C
+							      >	31D 00 000 00 12C
+							      >	31E 00 000 00 12C
+							      >	000 01 310 05 300
+							      >	001 21 310 05 00A
+							      >	002 13 000 0F 000
+							      >	003 15 000 14 000
+							      >	004 0D 190 00 000
+---------------- ERRO NA SAIDA arq21.parte2 ---------------- 
+
+**************** TESTANDO SAIDA ./saidas/arq22.parte2 (parte2) **************** 
+  Resultados em tests.results
+							      >	300 00 000 00 001
+							      >	301 00 000 00 00A
+							      >	302 00 000 00 064
+							      >	303 00 000 00 3E8
+							      >	100 01 301 02 302
+							      >	101 03 303 05 064
+							      >	102 06 100 07 300
+							      >	103 08 300 0A 000
+							      >	104 09 300 0B 302
+							      >	105 0C 303 0D 100
+							      >	106 0E 100 0D 130
+							      >	107 0F 100 0F 031
+							      >	108 10 100 12 100
+							      >	109 12 101 12 101
+							      >	10A 14 000 15 000
+							      >	10B 21 303 00 000
+---------------- ERRO NA SAIDA arq22.parte2 ---------------- 
+

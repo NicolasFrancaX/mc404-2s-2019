@@ -1,0 +1,36 @@
+
+LoCo:
+	 	- Movimentar o Uóli pelo terreno com o objetivo de encontrar e transmitir informações para os amigos e evitar as posições perigosas.
+ 		- O Uóli deve passar a pelo menos 5 metros do amigo para que a informação possa ser transferida.
+ 		- Note que o Uóli não consegue subir montanhas muito íngremes. Você deve identificar estes casos e programá-lo para que ele contorne os obstáculos.
+ 		- O terreno poderá conter obstáculos, além de montanhas muito íngremes. Estes obstáculos devem ser desviados, pois a colisão com estes pode afetar a trajetória ou mesmo o funcionamento do Uóli.
+
+
+BiCo:
+	- Implementar as seguintes funções:
+		- int set_torque(int engine_1, int engine_2);
+		- int set_engine_torque(int engine_id, int torque);
+		- int set_head_servo(int servo_id, int angle);
+		- unsigned short get_us_distance();
+		- void get_current_GPS_position(Vector3* pos);
+		- void get_gyro_angles(Vector3* angles);
+		- unsigned int get_time();
+		- unsigned int set_time();
+		- void puts(const char*);
+
+SOUL:
+	- Tempo do sistema (GPT)
+	
+	- syscalls (relacionado com "Descrição dos periféricos")
+		- read_ultrasonic_sensor
+		- set_servo_angles
+		- set_engine_torque
+		- read_gps
+		- read_gyroscope
+		- get_time
+		- set_time
+		- write
+
+	- Iniciando o sistema
+		- Configurando o Hardware
+		- Transferindo a execução para a aplicação de controle

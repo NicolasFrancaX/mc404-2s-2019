@@ -15,7 +15,7 @@
 all: loco.o bico.o soul.o
 	riscv32-unknown-elf-ld loco.o bico.o soul.o -g -o uoli.x
 
-loco.o: loco.c api_robot2.h
+loco.o: loco.c api_robot.h
 	riscv32-unknown-elf-gcc loco.c -c -g -o loco.o
 
 bico.o: bico.s

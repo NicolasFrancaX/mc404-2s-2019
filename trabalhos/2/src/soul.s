@@ -122,7 +122,7 @@ int_handler:
 			# <
 			blt a1, t1, erro_servo
 			blt t2, a1, erro_servo
-
+			sw t3,0(a1)
 			li a0, 0
 
 			j final
@@ -138,7 +138,7 @@ int_handler:
 			# <
 			blt a1, t1, erro_servo
 			blt t2, a1, erro_servo
-
+			sw t3,0(a1)
 			li a0, 0
 
 			j final
@@ -154,7 +154,7 @@ int_handler:
 			# <
 			blt a1, t1, erro_servo
 			blt t2, a1, erro_servo
-
+			sw t3,0(a1)
 			li a0, 0
 
 			j final
@@ -175,6 +175,22 @@ int_handler:
 	# 0, caso contrário. A chamada de sistema não deve 
 	# verificar a validade dos valores de torque. 
 	set_engine_torque:
+		li t1,1
+		li t2,2
+		beq a0,t1,engine1
+		beq a0,t2,engine2
+		li a0,-1
+		j final
+		engine1:
+			li t1,0xFFFF001A
+			sw t1,0(a1)
+			l1 a0,0
+			j final
+		engine2:
+			li t1,0xFFFF0018
+			sw t1,0(a1)
+			li a0,0
+			j final
 		j final
 
 	# Parâmetros
@@ -183,7 +199,30 @@ int_handler:
 	# Retorno
 	# -
 	read_gps:
-		j final
+		# x, y e z estao salvos em uma struct e sao armazenadas em enderecos consecutivos na memoria
+		
+		li t1,0xFFFF0004 
+		li t2,0
+		sw t1,0(t2)
+		loop_gps:
+			li t2,1
+			lw t3,0(t1)
+			beq t2,t3,cont_gps
+			j loop_gps
+		cont_gps:
+			li t1,0xFFFF0008 # endereco do valor de X lido pelo gps
+			li t2,0xFFFF000C # endereco do valor de Y lido pelo gps
+			li t3,0xFFFF0010 # endereco do valor de Z lido pelo gps
+			lw t1,0(t1) # X
+			lw t2,0(t2) # Y
+			lw t3 0(t3) # Z
+			lw t4,0(a0)   # endereco onde X sera salvo
+			addi t5,t4,4  # endereco onde Y sera salvo
+			addi t6,t4,4  # endereco onde Z sera salvo
+			sw t4,0(t1)
+			sw t5,0(t2)
+			sw t6,0(t3)
+			j final
 
 	# Parâmetros
 	# a0: Endereço do registro (com três valores inteiros)

@@ -152,6 +152,7 @@ int_handler:
 		li t1,0xFFFF0004 
 		li t2,0
 		sw t1,0(t2)
+		li t4,0
 		loop_gps:
 			li t2,1
 			lw t3,0(t1)
@@ -161,12 +162,9 @@ int_handler:
 			li t1,0xFFFF0008 # endereco do valor de X lido pelo gps
 			li t2,0xFFFF000C # endereco do valor de Y lido pelo gps
 			li t3,0xFFFF0010 # endereco do valor de Z lido pelo gps
-			lw t1,0(t1) # X
-			lw t2,0(t2) # Y
-			lw t3 0(t3) # Z
-			lw t4,0(a0)   # endereco onde X sera salvo
-			addi t5,t4,4  # endereco onde Y sera salvo
-			addi t6,t4,8  # endereco onde Z sera salvo
+			mv t4,a0
+			addi t5,t4,4
+			addi t6,t4,8
 			sw t4,0(t1)
 			sw t5,0(t2)
 			sw t6,0(t3)
@@ -188,8 +186,26 @@ int_handler:
 			j loop_gyro
 		cont_gyro:
 			li t1,0xFFFF0014
-			# implementar funcao que le a memoria em 3 pedacos
-			# salvar os 3 pedacos em a0, a0+4 e a0+8
+			lw t1,0(t1)
+			mv t2,t1
+			mv t3,t1
+
+			# X
+			srli t1,t1,20
+			# Y 
+			slli t2,t2,12 
+			srli t2,t2,22
+			# Z
+			slli t3,t3,22
+			srli t3,t3,22
+			# Vector3
+			mv t4,a0
+			addi t5,t4,4
+			addi t6,t4,8
+			sw t4,0(t1)
+			sw t5,0(t2)
+			sw t6,0(t3)
+
 		j final
 
 	# Parâmetros
@@ -270,3 +286,6 @@ _start:
 
 loop_infinito: 
   	j loop_infinito
+
+.data 
+count_time: .skip 4

@@ -2,36 +2,6 @@
 
 .align 4
 
-
-#read_ultrasonic_sensor: # retorna o valor do sensor ou -1
-	# 0xFFFF0020 <- 0
-	# a0 <- 0xFFFF0024
-	# ret
-
-#set_servo_anglo: # entradas: id do motor(a0) e angulo(a1) , saida: -1->angulo invalido, 		 # -2-> id invalido, 0 cc
-	# jumps de acordo com o valor a0
-	# a0 = 1  
-		# if a1 entre(16,116) 0xFFFF001E <- a1
-		# else ret -1
-	# a0 = 2  
-		# if a1 entre(52,90)  0xFFFF001D <- a1
-		# else ret -1
- 	# a0 = 3  
-		# if a1 entre(0,156)  0xFFFF001C <- a1
-		# else ret -1
-	
-	# a0 != 1,2,3 ret -2
-
-#set_engine_torque: # entradas: id do motor(a0) e torque(a1)
-		   # saidas: id invalido-> -1, cc-> 0
-	#jumps de acordo com o valor a0
-	#a0=1	0xFFFF001A <- a1 , ret 0
-	#a0=2 	0xFFFF0018 <- a1 , ret 0
-	#a0 != 1,2 ret -1
-
-
-.align 4
-
 int_handler:
 	# Salvar contexto
 
@@ -100,71 +70,52 @@ int_handler:
 		li t1, 1
 		li t2, 2
 		li t3, 3
-
-
 		beq a0, t1, servo1
 		beq a0, t2, servo2
 		beq a0, t3, servo3
-
 		li a0, -2
 		j final
-
 		servo1:
 			# 16 - 116
 			li t1, 16
 			li t2, 116
-
 			li t3, 0xFFFF001E
-
-
 			# <
 			blt a1, t1, erro_servo
 			blt t2, a1, erro_servo
 			sw t3,0(a1)
 			li a0, 0
-
 			j final
 
 		servo2:
 			# 52 - 90
 			li t1, 52
 			li t2, 90
-
 			li t3, 0xFFFF001D
-
-
 			# <
 			blt a1, t1, erro_servo
 			blt t2, a1, erro_servo
 			sw t3,0(a1)
 			li a0, 0
-
 			j final
 
 		servo3:	
 			# 0 - 156
 			li t1, 0
 			li t2, 156
-
 			li t3, 0xFFFF001C
-
-
 			# <
 			blt a1, t1, erro_servo
 			blt t2, a1, erro_servo
 			sw t3,0(a1)
 			li a0, 0
-
 			j final
 
 		erro_servo:
 			li a0, -1
 
-
 		j final
 		
-
-	
 	# Parâmetros
 	# a0: id do motor (0 ou 1)
 	# a1: torque do motor. 
@@ -198,7 +149,6 @@ int_handler:
 	# -
 	read_gps:
 		# x, y e z estao salvos em uma struct e sao armazenadas em enderecos consecutivos na memoria
-		
 		li t1,0xFFFF0004 
 		li t2,0
 		sw t1,0(t2)
@@ -216,7 +166,7 @@ int_handler:
 			lw t3 0(t3) # Z
 			lw t4,0(a0)   # endereco onde X sera salvo
 			addi t5,t4,4  # endereco onde Y sera salvo
-			addi t6,t4,4  # endereco onde Z sera salvo
+			addi t6,t4,8  # endereco onde Z sera salvo
 			sw t4,0(t1)
 			sw t5,0(t2)
 			sw t6,0(t3)
@@ -228,6 +178,18 @@ int_handler:
 	# Retorno
 	# -
 	read_gyroscope:
+		li t1,0
+		li t2,0xFFFF0004
+		sw t2,0(t1)
+		loop_gyro:
+			li t1,1
+			lw t3,0(t2)
+			beq t1,t3,cont_gyro
+			j loop_gyro
+		cont_gyro:
+			li t1,0xFFFF0014
+			# implementar funcao que le a memoria em 3 pedacos
+			# salvar os 3 pedacos em a0, a0+4 e a0+8
 		j final
 
 	# Parâmetros

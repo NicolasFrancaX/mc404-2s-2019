@@ -228,6 +228,57 @@ int_handler:
 	# Retorno
 	# a0: Número de bytes efetivamente escritos. 
 	write:
+		# Se a0 = 1, POR ENQUANTO sair!
+		bne a0, zero, nao_deveria_ser_stdout
+
+		# a0 = 0 => stdin
+
+		# 0xFFFF0108
+		# Quando atribuído valor 1, a UART inicia a transmissão do valor armazenado em 0xFFFF0109.
+		# Quando a transmissão terminar e a UART estiver pronta para iniciar a transmissão de um novo byte, o valor 0 é atribuído ao registrador. 
+
+		# 0xFFFF0109
+		# Valor a ser transmitido pela UART. 
+
+		# t0 := base do endereco
+		# t1 := contador
+
+		li t1, 0 
+
+		mv t0, a2
+
+		li t2, 0xFFFF0109
+
+		loop:
+			beq t1, a2, sair_loop
+
+			# Queremos o caracter
+			lb t4, t0, 0(t1)
+
+			sb t2, 0(t4)
+
+			loop2: 
+
+				# UART
+				li t3, 0xFFFF0108
+				lb t3, 0(t3)
+
+				beq t3, zero, loop2 # Se t3 = 0, sai da transmissao
+
+
+			addi t1, t1, 1 # contador++
+			j loop
+
+		sair_loop:
+
+		mv a0, t1
+
+		j final
+
+		# Se a0 = 1
+		nao_deveria_ser_stdout:
+			li a0, -1
+
 		j final
 
 	final:

@@ -9,25 +9,18 @@ int_handler:
 
 	li t0, 16
 	beq a7, t0, read_ultrasonic_sensor
-
 	li t0, 17
 	beq a7, t0, set_servo_angles
-
 	li t0, 18
 	beq a7, t0, set_engine_torque
-
 	li t0, 19
 	beq a7, t0, read_gps
-
 	li t0, 20
 	beq a7, t0, read_gyroscope
-
 	li t0, 21
 	beq a7, t0, get_time
-
 	li t0, 22
 	beq a7, t0, set_time
-
 	li t0, 64
 	beq a7, t0, write
 
@@ -258,13 +251,11 @@ int_handler:
 			sb t2, 0(t4)
 
 			loop2: 
-
 				# UART
 				li t3, 0xFFFF0108
 				lb t3, 0(t3)
 
 				beq t3, zero, loop2 # Se t3 = 0, sai da transmissao
-
 
 			addi t1, t1, 1 # contador++
 			j loop
@@ -296,7 +287,9 @@ int_handler:
 
 .globl _start
 _start:
+
 	# Configurando o Tratador de Interrupções:
+
   	la t0, int_handler  # Carregar o endereÃ§o da rotina que tratarÃ¡ as interrupÃ§Ãµes
   	csrw mtvec, t0      # (e syscalls) em no registrador MTVEC para configurar o
                       # vetor de interrupÃ§Ãµes.
@@ -323,17 +316,26 @@ _start:
 	csrw mstatus, t1
 
 	# PERGUNTAR:
-	# la t0, user   # Grava o endereço do rótulo user
-	# csrw mepc, t0 # no registrador mepc
+	la t0, user   # Grava o endereço do rótulo user
+	csrw mepc, t0 # no registrador mepc
 
 	mret # PC <= MEPC; MIE <= MPIE; Muda modo para MPP
 
 
+	# ATENÇÃO:
+    # Configurar o GPT para gerar interrupção após 1100 ms;
+    # Configurar o torque dos dois motores para zero; <- por syscall
+    # Configurar as articulações da cabeça do Uóli para a posição natural (Base = 31, Mid = 80, Top = 78); <- por syscall
+
+
 	# AQUI PODEMOS BRINCAR COM AS SYSCALLS:
-  
+
   	# ecall               # Exemplo de chamada de sistema
 
   	# ...
+
+user:
+	jal main
 
 loop_infinito: 
   	j loop_infinito

@@ -21,11 +21,11 @@ set_torque:
     mv t1,a1
     li a0,0
     mv a1,t0
-    set_engine_torque
+    jal set_engine_torque
     beq t2,a0,erro_torque
     li a0,1
     mv a1,t1
-    set_engine_torque
+    jal set_engine_torque
     beq t2,a0,erro_torque
     ret
     erro_torque:
@@ -69,22 +69,22 @@ set_engine_torque:
 
 
 set_head_servo:
-    li a7,17
+    li a7, 17
     ecall
     ret
 
 get_us_distance:
-    li a7,16
+    li a7, 16
     ecall
     ret
 
 get_current_GPS_position:
-    li a7,19
+    li a7, 19
     ecall
     ret
 
 get_gyro_angles:
-    li a7,20
+    li a7, 20
     ecall
     ret
 
@@ -96,16 +96,16 @@ set_time:
 
 puts:
     # aqui temos que definir o tamanho da string e salvar em a2
-    li a7,64
-    mv a1,a0 # a1 = enredeco 
-    mv t0,a0
-    li a0,0 # a0 = 0 input
-    li t1,0
+    li a7, 64
+    mv a1, a0 # a1 = enredeco 
+    mv t0, a0
+    li a0, 0 # a0 = 0 input
+    li t1, 0
     loop_string:
-        #ler os bytes ate achar o \0
-        lb t2,t0,0(t1)
-        addi t1,t1,1
-        bne t2,a0,loop_string
+        # ler os bytes ate achar o \0
+        lb t2, t0, 0(t1)
+        addi t1, t1, 1
+        bne t2, a0, loop_string
     mv a2,t1
     ecall
 

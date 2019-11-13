@@ -5,283 +5,334 @@
 int_handler:
 	# Salvar contexto
 
+	# decodifica a causa da interrupção
+	csrr a1, mcause # lê a causa da exceção e trata de
+					# acordo com a causa
+
+	# Desvio de fluxo
+	bge a1, zero, handler_syscalls
+	j handler_interrupcoes
+
 	###### Tratador de interrupÃ§Ãµes e syscalls ######
 
-	li t0, 16
-	beq a7, t0, read_ultrasonic_sensor
-	li t0, 17
-	beq a7, t0, set_servo_angles
-	li t0, 18
-	beq a7, t0, set_engine_torque
-	li t0, 19
-	beq a7, t0, read_gps
-	li t0, 20
-	beq a7, t0, read_gyroscope
-	li t0, 21
-	beq a7, t0, get_time
-	li t0, 22
-	beq a7, t0, set_time
-	li t0, 64
-	beq a7, t0, write
+	handler_interrupcoes:
+		# Aqui vamos configurar o gpt
 
-	j final
+		li t0, 0xFFFF0100
+		li t1, 0xFFFF0104
+		li t2, 1
+		li t3, 100
 
-	# Parâmetros
-	# Retorno
-	# a0: Valor obtido na leitura do sensor; 
-	# -1 caso nenhum objeto tenha sido detectado a menos 
-	# de 600 centímetros.
-	read_ultrasonic_sensor:
-		# Atribuindo valor = 0 em 0xFFFF0020
-		li t1, 0
-		li t2, 0xFFFF0020
-		sw t2, 0(t1)	
+		lw t4, 0(t0)
+		lw t5, 0(t1)
 
-		# Esperando o valor de 0xFFFF0020 ser igual a 1
-		volta:
-			li t3, 1
-			lw t4, 0(t2)
-			beq t4, t3, sair_volta
-			j volta
-		sair_volta:
+		beq t4, zero, saida_interrupcoes
 
-		# Valor a ser retornado
-		li t1, 0xFFFF0024
-		lw a0, 0(t1)
+		beq t5, t2, tratador_gpt
+		j saida_interrupcoes
+
+		tratador_gpt:
+			sw zero, 0(t0)
+
+			sw t2, 0(t1) # M[0xFFFF0104] = 1
+
+			# adicionar 100 no count_time
+			la t6, 0(count_time)
+			lw a1, 0(t6)
+			addi a1, a1, 100
+			sw a1, 0(t6)
+
+			# colocar 100 no t0 (sw t3, 0(t0))
+			sw t3, 0(t0)
+
+			# Significa que a interrupcao foi tratada
+			sw zero, 0(t1)
+
+		saida_interrupcoes:
+		mret
+
+	# ATENÇÃO: DEPOIS DO TRATAMENTO DE SYSCALLS, 
+	# ATUALIZAR PC = PC+4...
+	handler_syscalls:
+		li t0, 16
+		beq a7, t0, read_ultrasonic_sensor
+		li t0, 17
+		beq a7, t0, set_servo_angles
+		li t0, 18
+		beq a7, t0, set_engine_torque
+		li t0, 19
+		beq a7, t0, read_gps
+		li t0, 20
+		beq a7, t0, read_gyroscope
+		li t0, 21
+		beq a7, t0, get_time
+		li t0, 22
+		beq a7, t0, set_time
+		li t0, 64
+		beq a7, t0, write
 
 		j final
 
-	# Parâmetros
-	# a0: id do servo a ser modificado.
-	# a1: ângulo para o servo. 
-	# Retorno
-	# a0: -1, caso o ângulo de um dos servos seja inválido
-	# (neste caso, a operação toda deve ser cancelada e nenhum
-	# ângulo definido). -2, caso o id do servo seja inválido.
-	# Caso contrário, retorna 0. 
-	set_servo_angles:
-		li t1, 1
-		li t2, 2
-		li t3, 3
-		beq a0, t1, servo1
-		beq a0, t2, servo2
-		beq a0, t3, servo3
-		li a0, -2
-		j final
-		servo1:
-			# 16 - 116
-			li t1, 16
-			li t2, 116
-			li t3, 0xFFFF001E
-			# <
-			blt a1, t1, erro_servo
-			blt t2, a1, erro_servo
-			sw t3,0(a1)
-			li a0, 0
-			j final
-
-		servo2:
-			# 52 - 90
-			li t1, 52
-			li t2, 90
-			li t3, 0xFFFF001D
-			# <
-			blt a1, t1, erro_servo
-			blt t2, a1, erro_servo
-			sw t3,0(a1)
-			li a0, 0
-			j final
-
-		servo3:	
-			# 0 - 156
+		# Parâmetros
+		# Retorno
+		# a0: Valor obtido na leitura do sensor; 
+		# -1 caso nenhum objeto tenha sido detectado a menos 
+		# de 600 centímetros.
+		read_ultrasonic_sensor:
+			# Atribuindo valor = 0 em 0xFFFF0020
 			li t1, 0
-			li t2, 156
-			li t3, 0xFFFF001C
-			# <
-			blt a1, t1, erro_servo
-			blt t2, a1, erro_servo
-			sw t3,0(a1)
-			li a0, 0
+			li t2, 0xFFFF0020
+			sw t2, 0(t1)	
+
+			# Esperando o valor de 0xFFFF0020 ser igual a 1
+			volta:
+				li t3, 1
+				lw t4, 0(t2)
+				beq t4, t3, sair_volta
+				j volta
+			sair_volta:
+
+			# Valor a ser retornado
+			li t1, 0xFFFF0024
+			lw a0, 0(t1)
+
 			j final
 
-		erro_servo:
-			li a0, -1
-
-		j final
-		
-	# Parâmetros
-	# a0: id do motor (0 ou 1)
-	# a1: torque do motor. 
-	# Retorno
-	# a0: -1, caso o id do motor seja inválido. 
-	# 0, caso contrário. A chamada de sistema não deve 
-	# verificar a validade dos valores de torque. 
-	set_engine_torque:
-		li t1,1
-		li t2,2
-		beq a0,t1,engine1
-		beq a0,t2,engine2
-		li a0,-1
-		j final
-		engine1:
-			li t1,0xFFFF001A
-			sw t1,0(a1)
-			l1 a0,0
+		# Parâmetros
+		# a0: id do servo a ser modificado.
+		# a1: ângulo para o servo. 
+		# Retorno
+		# a0: -1, caso o ângulo de um dos servos seja inválido
+		# (neste caso, a operação toda deve ser cancelada e nenhum
+		# ângulo definido). -2, caso o id do servo seja inválido.
+		# Caso contrário, retorna 0. 
+		set_servo_angles:
+			li t1, 1
+			li t2, 2
+			li t3, 3
+			beq a0, t1, servo1
+			beq a0, t2, servo2
+			beq a0, t3, servo3
+			li a0, -2
 			j final
-		engine2:
-			li t1,0xFFFF0018
-			sw t1,0(a1)
-			li a0,0
-			j final
-		j final
+			servo1:
+				# 16 - 116
+				li t1, 16
+				li t2, 116
+				li t3, 0xFFFF001E
+				# <
+				blt a1, t1, erro_servo
+				blt t2, a1, erro_servo
+				sw t3,0(a1)
+				li a0, 0
+				j final
 
-	# Parâmetros
-	# a0: Endereço do registro (com três valores inteiros) 
-	# para armazenar as coordenadas (x, y, z); 
-	# Retorno
-	# -
-	read_gps:
-		# x, y e z estao salvos em uma struct e sao armazenadas em enderecos consecutivos na memoria
-		li t1,0xFFFF0004 
-		li t2,0
-		sw t1,0(t2)
-		li t4,0
-		loop_gps:
-			li t2,1
-			lw t3,0(t1)
-			beq t2,t3,cont_gps
-			j loop_gps
-		cont_gps:
-			li t1,0xFFFF0008 # endereco do valor de X lido pelo gps
-			li t2,0xFFFF000C # endereco do valor de Y lido pelo gps
-			li t3,0xFFFF0010 # endereco do valor de Z lido pelo gps
-			mv t4,a0
-			addi t5,t4,4
-			addi t6,t4,8
-			sw t4,0(t1)
-			sw t5,0(t2)
-			sw t6,0(t3)
-			j final
+			servo2:
+				# 52 - 90
+				li t1, 52
+				li t2, 90
+				li t3, 0xFFFF001D
+				# <
+				blt a1, t1, erro_servo
+				blt t2, a1, erro_servo
+				sw t3,0(a1)
+				li a0, 0
+				j final
 
-	# Parâmetros
-	# a0: Endereço do registro (com três valores inteiros)
-	# para armazenar os ângulos de Euler (x, y, z);
-	# Retorno
-	# -
-	read_gyroscope:
-		li t1,0
-		li t2,0xFFFF0004
-		sw t2,0(t1)
-		loop_gyro:
+			servo3:	
+				# 0 - 156
+				li t1, 0
+				li t2, 156
+				li t3, 0xFFFF001C
+				# <
+				blt a1, t1, erro_servo
+				blt t2, a1, erro_servo
+				sw t3,0(a1)
+				li a0, 0
+				j final
+
+			erro_servo:
+				li a0, -1
+
+			j final
+			
+		# Parâmetros
+		# a0: id do motor (0 ou 1)
+		# a1: torque do motor. 
+		# Retorno
+		# a0: -1, caso o id do motor seja inválido. 
+		# 0, caso contrário. A chamada de sistema não deve 
+		# verificar a validade dos valores de torque. 
+		set_engine_torque:
 			li t1,1
-			lw t3,0(t2)
-			beq t1,t3,cont_gyro
-			j loop_gyro
-		cont_gyro:
-			li t1,0xFFFF0014
-			lw t1,0(t1)
-			mv t2,t1
-			mv t3,t1
+			li t2,2
+			beq a0,t1,engine1
+			beq a0,t2,engine2
+			li a0,-1
+			j final
+			engine1:
+				li t1,0xFFFF001A
+				sw t1,0(a1)
+				l1 a0,0
+				j final
+			engine2:
+				li t1,0xFFFF0018
+				sw t1,0(a1)
+				li a0,0
+				j final
+			j final
 
-			# X
-			srli t1,t1,20
-			# Y 
-			slli t2,t2,12 
-			srli t2,t2,22
-			# Z
-			slli t3,t3,22
-			srli t3,t3,22
-			# Vector3
-			mv t4,a0
-			addi t5,t4,4
-			addi t6,t4,8
-			sw t4,0(t1)
-			sw t5,0(t2)
-			sw t6,0(t3)
+		# Parâmetros
+		# a0: Endereço do registro (com três valores inteiros) 
+		# para armazenar as coordenadas (x, y, z); 
+		# Retorno
+		# -
+		read_gps:
+			# x, y e z estao salvos em uma struct e sao armazenadas em enderecos consecutivos na memoria
+			li t1,0xFFFF0004 
+			li t2,0
+			sw t1,0(t2)
+			li t4,0
+			loop_gps:
+				li t2,1
+				lw t3,0(t1)
+				beq t2,t3,cont_gps
+				j loop_gps
+			cont_gps:
+				li t1,0xFFFF0008 # endereco do valor de X lido pelo gps
+				li t2,0xFFFF000C # endereco do valor de Y lido pelo gps
+				li t3,0xFFFF0010 # endereco do valor de Z lido pelo gps
+				mv t4,a0
+				addi t5,t4,4
+				addi t6,t4,8
+				sw t4,0(t1)
+				sw t5,0(t2)
+				sw t6,0(t3)
+				j final
 
-		j final
+		# Parâmetros
+		# a0: Endereço do registro (com três valores inteiros)
+		# para armazenar os ângulos de Euler (x, y, z);
+		# Retorno
+		# -
+		read_gyroscope:
+			li t1,0
+			li t2,0xFFFF0004
+			sw t2,0(t1)
+			loop_gyro:
+				li t1,1
+				lw t3,0(t2)
+				beq t1,t3,cont_gyro
+				j loop_gyro
+			cont_gyro:
+				li t1,0xFFFF0014
+				lw t1,0(t1)
+				mv t2,t1
+				mv t3,t1
 
-	# Parâmetros
-	# Retorno
-	# a0: tempo do sistema, em milissegundos 	
-	get_time:
-		j final
+				# X
+				srli t1,t1,20
+				# Y 
+				slli t2,t2,12 
+				srli t2,t2,22
+				# Z
+				slli t3,t3,22
+				srli t3,t3,22
+				# Vector3
+				mv t4,a0
+				addi t5,t4,4
+				addi t6,t4,8
+				sw t4,0(t1)
+				sw t5,0(t2)
+				sw t6,0(t3)
 
-	# Parâmetros
-	# a0: tempo do sistema, em milissegundos 
-	# Retorno
-	# -
-	set_time:
-		j final
+			j final
 
-	# Parâmetros
-	# a0: Descritor do arquivo
-	# a1: Endereço de memória do buffer a ser escrito.
-    # a2: Número de bytes a serem escritos. 
-	# Retorno
-	# a0: Número de bytes efetivamente escritos. 
-	write:
-		# Se a0 = 1, POR ENQUANTO sair!
-		bne a0, zero, nao_deveria_ser_stdout
+		# Parâmetros
+		# Retorno
+		# a0: tempo do sistema, em milissegundos 	
+		get_time:
+			la t0, 0(count_time)
+			lw a0, 0(t0)
+			j final
 
-		# a0 = 0 => stdin
+		# Parâmetros
+		# a0: tempo do sistema, em milissegundos 
+		# Retorno
+		# -
+		set_time:
+			la t0, 0(count_time)
+			sw a0, 0(t0)
+			j final
 
-		# 0xFFFF0108
-		# Quando atribuído valor 1, a UART inicia a transmissão do valor armazenado em 0xFFFF0109.
-		# Quando a transmissão terminar e a UART estiver pronta para iniciar a transmissão de um novo byte, o valor 0 é atribuído ao registrador. 
+		# Parâmetros
+		# a0: Descritor do arquivo
+		# a1: Endereço de memória do buffer a ser escrito.
+		# a2: Número de bytes a serem escritos. 
+		# Retorno
+		# a0: Número de bytes efetivamente escritos. 
+		write:
+			# Se a0 = 1, POR ENQUANTO sair!
+			bne a0, zero, nao_deveria_ser_stdout
 
-		# 0xFFFF0109
-		# Valor a ser transmitido pela UART. 
+			# a0 = 0 => stdin
 
-		# t0 := base do endereco
-		# t1 := contador
+			# 0xFFFF0108
+			# Quando atribuído valor 1, a UART inicia a transmissão do valor armazenado em 0xFFFF0109.
+			# Quando a transmissão terminar e a UART estiver pronta para iniciar a transmissão de um novo byte, o valor 0 é atribuído ao registrador. 
 
-		li t1, 0 
+			# 0xFFFF0109
+			# Valor a ser transmitido pela UART. 
 
-		mv t0, a2
+			# t0 := base do endereco
+			# t1 := contador
 
-		li t2, 0xFFFF0109
+			li t1, 0 
 
-		loop:
-			beq t1, a2, sair_loop
+			mv t0, a2
 
-			# Queremos o caracter
-			lb t4, t0, 0(t1)
+			li t2, 0xFFFF0109
 
-			sb t2, 0(t4)
+			loop:
+				beq t1, a2, sair_loop
 
-			loop2: 
-				# UART
-				li t3, 0xFFFF0108
-				lb t3, 0(t3)
+				# Queremos o caracter
+				lb t4, t0, 0(t1)
 
-				beq t3, zero, loop2 # Se t3 = 0, sai da transmissao
+				sb t2, 0(t4)
 
-			addi t1, t1, 1 # contador++
-			j loop
+				loop2: 
+					# UART
+					li t3, 0xFFFF0108
+					lb t3, 0(t3)
 
-		sair_loop:
+					beq t3, zero, loop2 # Se t3 = 0, sai da transmissao
 
-		mv a0, t1
+				addi t1, t1, 1 # contador++
+				j loop
 
-		j final
+			sair_loop:
 
-		# Se a0 = 1
-		nao_deveria_ser_stdout:
-			li a0, -1
+			mv a0, t1
 
-		j final
+			j final
 
-	final:
+			# Se a0 = 1
+			nao_deveria_ser_stdout:
+				li a0, -1
 
-  
-	# <= Implemente o tratamento da sua syscall aqui 
-  
-	# Restaura contexto
-	csrr t0, mepc  # carrega endereÃ§o de retorno (endereÃ§o da instruÃ§Ã£o que invocou a syscall)
-	addi t0, t0, 4 # soma 4 no endereÃ§o de retorno (para retornar apÃ³s a ecall) 
- 	csrw mepc, t0  # armazena endereÃ§o de retorno de volta no mepc
-  	mret           # Recuperar o restante do contexto (pc <- mepc)
+			j final
+
+		final:
+			# Restaura contexto
+			csrr t0, mepc  # carrega endereÃ§o de retorno (endereÃ§o da instruÃ§Ã£o que invocou a syscall)
+			addi t0, t0, 4 # soma 4 no endereÃ§o de retorno (para retornar apÃ³s a ecall) 
+			csrw mepc, t0  # armazena endereÃ§o de retorno de volta no mepc
+			mret           # Recuperar o restante do contexto (pc <- mepc)
+
+	
+		# <= Implemente o tratamento da sua syscall aqui 
+	
   
 
 
@@ -341,4 +392,4 @@ loop_infinito:
   	j loop_infinito
 
 .data 
-count_time: .skip 4
+count_time: .word 0

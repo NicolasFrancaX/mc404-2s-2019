@@ -71,7 +71,22 @@ set_engine_torque:
 set_head_servo:
     li a7, 17
     ecall
+    # inverter as saidas de erros -1 e -2
+    li t1,-1
+    li t2,-2
+    beq a0,t1,inverte_1
+    beq a0,t2,inverte_2
+    j retorno
+    inverte_1:
+    li a0,-2
+    j retorno
+    inverte_2:
+    li a0,-1
+    j retorno
+
+    retorno:
     ret
+
 
 get_us_distance:
     li a7, 16
@@ -89,9 +104,13 @@ get_gyro_angles:
     ret
 
 get_time:
+    li a7,21
+    ecall
     ret
 
 set_time:
+    li a7,22
+    ecall
     ret
 
 puts:
@@ -110,3 +129,4 @@ puts:
     ecall
 
     ret
+

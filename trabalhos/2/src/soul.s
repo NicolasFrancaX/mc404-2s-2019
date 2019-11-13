@@ -272,10 +272,11 @@ int_handler:
 		# Retorno
 		# a0: Número de bytes efetivamente escritos. 
 		write:
-			# Se a0 = 1, POR ENQUANTO sair!
-			bne a0, zero, nao_deveria_ser_stdout
+			# Se a0 = 0, POR ENQUANTO sair!
+			li t1,1
+			bne a0, t1, nao_deveria_ser_stdin
 
-			# a0 = 0 => stdin
+			# a0 = 1 => stdout
 
 			# 0xFFFF0108
 			# Quando atribuído valor 1, a UART inicia a transmissão do valor armazenado em 0xFFFF0109.
@@ -317,8 +318,8 @@ int_handler:
 
 			j final
 
-			# Se a0 = 1
-			nao_deveria_ser_stdout:
+			# Se a0 = 0
+			nao_deveria_ser_stdin:
 				li a0, -1
 
 			j final

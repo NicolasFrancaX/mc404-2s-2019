@@ -118,13 +118,15 @@ puts:
     li a7, 64
     mv a1, a0 # a1 = enredeco 
     mv t0, a0
-    li a0, 0 # a0 = 0 input
+    li a0, 1 # output 
     li t1, 0
     loop_string:
         # ler os bytes ate achar o \0
-        lb t2, t0, 0(t1)
+        add t0, t0, t1
+        lb t2, 0(t0) 
         addi t1, t1, 1
-        bne t2, a0, loop_string
+        # checar se t1 encosta no tamanho maximo
+        bne t2, zero, loop_string
     mv a2,t1
     ecall
 

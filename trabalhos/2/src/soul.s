@@ -21,32 +21,33 @@ int_handler:
 		li t0, 0xFFFF0100
 		li t1, 0xFFFF0104
 		li t2, 1
-		li t3, 100
+		li t3, 1000
 
 		lw t4, 0(t0)
 		lw t5, 0(t1)
 
-		beq t4, zero, saida_interrupcoes
 
-		beq t5, t2, tratador_gpt
-		j saida_interrupcoes
+		beq t5, zero, saida_interrupcoes
+
+		#beq t4, t2, tratador_gpt
+		#j saida_interrupcoes
 
 		tratador_gpt:
-			sw zero, 0(t0)
+			sw zero, 0(t1)
 
-			sw t2, 0(t1) # M[0xFFFF0104] = 1
+			#sw t2, 0(t1) # M[0xFFFF0104] = 1
 
 			# adicionar 100 no count_time
-			la t6, 0(count_time)
+			la t6, count_time
 			lw a1, 0(t6)
-			addi a1, a1, 100
+			addi a1, a1, 1000
 			sw a1, 0(t6)
 
 			# colocar 100 no t0 (sw t3, 0(t0))
 			sw t3, 0(t0)
 
 			# Significa que a interrupcao foi tratada
-			sw zero, 0(t1)
+			
 
 		saida_interrupcoes:
 		mret
@@ -156,6 +157,7 @@ int_handler:
 
 			j final
 			
+			
 		# Parâmetros
 		# a0: id do motor (0 ou 1)
 		# a1: torque do motor. 
@@ -164,20 +166,20 @@ int_handler:
 		# 0, caso contrário. A chamada de sistema não deve 
 		# verificar a validade dos valores de torque. 
 		set_engine_torque:
-			li t1,1
-			li t2,2
+			li t1,0
+			li t2,1
 			beq a0,t1,engine1
 			beq a0,t2,engine2
 			li a0,-1
 			j final
 			engine1:
 				li t1,0xFFFF001A
-				sw t1,0(a1)
-				l1 a0,0
+				sw a1,0(t1)
+				li a0,0
 				j final
 			engine2:
 				li t1,0xFFFF0018
-				sw t1,0(a1)
+				sw a1,0(t1)
 				li a0,0
 				j final
 			j final
@@ -252,7 +254,7 @@ int_handler:
 		# Retorno
 		# a0: tempo do sistema, em milissegundos 	
 		get_time:
-			la t0, 0(count_time)
+			la t0, count_time
 			lw a0, 0(t0)
 			j final
 
@@ -261,7 +263,7 @@ int_handler:
 		# Retorno
 		# -
 		set_time:
-			la t0, 0(count_time)
+			la t0, count_time
 			sw a0, 0(t0)
 			j final
 
@@ -290,7 +292,9 @@ int_handler:
 
 			li t1, 0 
 
-			mv t0, a2
+			li t5, 0
+			
+			addi t5, a2, 0
 
 			li t2, 0xFFFF0109
 
@@ -298,7 +302,8 @@ int_handler:
 				beq t1, a2, sair_loop
 
 				# Queremos o caracter
-				lb t4, t0, 0(t1)
+				add t5,t5,t1
+				mv t4, t5
 
 				sb t2, 0(t4)
 
@@ -345,7 +350,7 @@ _start:
   	la t0, int_handler  # Carregar o endereÃ§o da rotina que tratarÃ¡ as interrupÃ§Ãµes
   	csrw mtvec, t0      # (e syscalls) em no registrador MTVEC para configurar o
                       # vetor de interrupÃ§Ãµes.
-
+	la sp,pilha_usuario
 	# Habilita Interrupções Global
 	csrr t1, mstatus # Seta o bit 7 (MPIE)
 	ori t1, t1, 0x80 # do registrador mie
@@ -368,8 +373,11 @@ _start:
 	csrw mstatus, t1
 
 	# PERGUNTAR:
-	la t0, user   # Grava o endereço do rótulo user
+	la t0, main   # Grava o endereço do rótulo user
 	csrw mepc, t0 # no registrador mepc
+	li t0,0xFFFF0100
+	li t1,1000
+	#sw t1,0(t0)
 
 	mret # PC <= MEPC; MIE <= MPIE; Muda modo para MPP
 
@@ -386,11 +394,13 @@ _start:
 
   	# ...
 
-user:
-	jal main
-
 loop_infinito: 
   	j loop_infinito
 
 .data 
 count_time: .word 0
+reg_buffer: .skip 1000
+final_pilha:
+
+.comm pilha,30000000,4
+pilha_usuario:

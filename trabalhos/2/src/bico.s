@@ -1,12 +1,12 @@
-.global set_torque
-.global set_engine_torque
-.global set_head_servo
-.global get_us_distance
-.global get_current_GPS_position
-.global get_gyro_angles
-.global get_time
-.global set_time
-.global puts
+.globl set_torque
+.globl set_engine_torque
+.globl set_head_servo
+.globl get_us_distance
+.globl get_current_GPS_position
+.globl get_gyro_angles
+.globl get_time
+.globl set_time
+.globl puts
 
 # Parâmetros
 # a0: valor do torque do motor 1
@@ -131,4 +131,3 @@ puts:
     ecall
 
     ret
-

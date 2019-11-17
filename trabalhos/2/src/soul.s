@@ -3,8 +3,24 @@
 .align 4
 
 int_handler:
-	# Salvar contexto
-
+	# salvar contexto
+	csrrw a0, mscratch, a0
+	sw a1, 0(a0)
+	sw a2, 4(a0)
+	sw a3, 8(a0)
+	sw a4, 12(a0)
+	sw a5, 16(a0)
+	sw a6, 20(a0)
+	sw a7, 24(a0)
+	sw t0, 28(a0)
+	sw t1, 32(a0)
+	sw t2, 36(a0)
+	sw t3, 40(a0)
+	sw t4, 44(a0)
+	sw t5, 48(a0)
+	sw t6, 52(a0)
+	sw ra, 56(a0)
+	
 	# decodifica a causa da interrupção
 	csrr a1, mcause # lê a causa da exceção e trata de
 					# acordo com a causa
@@ -13,7 +29,7 @@ int_handler:
 	bge a1, zero, handler_syscalls
 	j handler_interrupcoes
 
-	###### Tratador de interrupÃ§Ãµes e syscalls ######
+	###### Tratador de interrupcoes ######
 
 	handler_interrupcoes:
 		# Aqui vamos configurar o gpt
@@ -50,11 +66,30 @@ int_handler:
 			
 
 		saida_interrupcoes:
+			lw ra, 56(a0)
+			lw t6, 52(a0)
+			lw t5, 48(a0)
+			lw t4, 44(a0)
+			lw t3, 40(a0)
+			lw t2, 36(a0)
+			lw t1, 32(a0)
+			lw t0, 28(a0)
+			lw a7, 24(a0)
+			lw a6, 20(a0)
+			lw a5, 16(a0)
+			lw a4, 12(a0)
+			lw a3, 8(a0)
+			lw a2, 4(a0)
+			lw a1, 0(a0)
+			csrrw a0, mscratch, a0
 		mret
 
 	# ATENÇÃO: DEPOIS DO TRATAMENTO DE SYSCALLS, 
 	# ATUALIZAR PC = PC+4...
 	handler_syscalls:
+		# Salva o contexto!
+
+
 		li t0, 16
 		beq a7, t0, read_ultrasonic_sensor
 		li t0, 17
@@ -331,13 +366,30 @@ int_handler:
 
 		final:
 			# Restaura contexto
+			lw ra, 56(a0)
+			lw t6, 52(a0)
+			lw t5, 48(a0)
+			lw t4, 44(a0)
+			lw t3, 40(a0)
+			lw t2, 36(a0)
+			lw t1, 32(a0)
+			lw t0, 28(a0)
+			lw a7, 24(a0)
+			lw a6, 20(a0)
+			lw a5, 16(a0)
+			lw a4, 12(a0)
+			lw a3, 8(a0)
+			lw a2, 4(a0)
+			lw a1, 0(a0)
+			csrrw a0, mscratch, a0
+
+
 			csrr t0, mepc  # carrega endereÃ§o de retorno (endereÃ§o da instruÃ§Ã£o que invocou a syscall)
 			addi t0, t0, 4 # soma 4 no endereÃ§o de retorno (para retornar apÃ³s a ecall) 
 			csrw mepc, t0  # armazena endereÃ§o de retorno de volta no mepc
 			mret           # Recuperar o restante do contexto (pc <- mepc)
 
 	
-		# <= Implemente o tratamento da sua syscall aqui 
 	
   
 
@@ -350,7 +402,10 @@ _start:
   	la t0, int_handler  # Carregar o endereÃ§o da rotina que tratarÃ¡ as interrupÃ§Ãµes
   	csrw mtvec, t0      # (e syscalls) em no registrador MTVEC para configurar o
                       # vetor de interrupÃ§Ãµes.
-	la sp,pilha_usuario
+
+	# Pilha do usuário
+	la sp, pilha_usuario
+
 	# Habilita Interrupções Global
 	csrr t1, mstatus # Seta o bit 7 (MPIE)
 	ori t1, t1, 0x80 # do registrador mie
@@ -363,8 +418,9 @@ _start:
 	csrw mie, t1
 
 	# Ajusta o mscratch
-	la t1, reg_buffer # Coloca o endereço do buffer para salvar
-	csrw mscratch, t1 # registradores em mscratch
+	la t6, reg_buffer # Coloca o endereço do buffer para salvar
+	csrw mscratch, t6 # registradores em mscratch
+
 
 	# Muda para o Modo de usuário
 	csrr t1, mstatus # Seta os bits 11 e 12 (MPP)
@@ -375,9 +431,16 @@ _start:
 	# PERGUNTAR:
 	la t0, main   # Grava o endereço do rótulo user
 	csrw mepc, t0 # no registrador mepc
+
+	# Configurar o GPT para gerar interrupção após 100 ms; <-
 	li t0,0xFFFF0100
-	li t1,1000
+	li t1,1000 # t = 1000 ms
 	#sw t1,0(t0)
+
+
+	# Configurar o torque dos dois motores para zero;
+
+	# Configurar as articulações da cabeça do Uóli para a posição natural (Base = 31, Mid = 80, Top = 78);
 
 	mret # PC <= MEPC; MIE <= MPIE; Muda modo para MPP
 

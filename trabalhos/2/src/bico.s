@@ -21,6 +21,8 @@ set_torque:
     mv t1,a1
     li a0,0
     mv a1,t0
+
+
     jal set_engine_torque
     beq t2,a0,erro_torque
     li a0,1

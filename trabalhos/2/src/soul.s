@@ -4,29 +4,30 @@
 
 int_handler:
 	# salvar contexto
-	csrrw a0, mscratch, a0
-	sw a1, 0(a0)
-	sw a2, 4(a0)
-	sw a3, 8(a0)
-	sw a4, 12(a0)
-	sw a5, 16(a0)
-	sw a6, 20(a0)
-	sw a7, 24(a0)
-	sw t0, 28(a0)
-	sw t1, 32(a0)
-	sw t2, 36(a0)
-	sw t3, 40(a0)
-	sw t4, 44(a0)
-	sw t5, 48(a0)
-	sw t6, 52(a0)
-	sw ra, 56(a0)
+	csrrw a2, mscratch, a2
+	sw a1, 0(a2)
+	sw a3, 4(a2)
+	sw a4, 8(a2)
+	sw a5, 12(a2)
+	sw a6, 16(a2)
+	sw a7, 20(a2)
+	sw t0, 24(a2)
+	sw t1, 28(a2)
+	sw t2, 32(a2)
+	sw t3, 36(a2)
+	sw t4, 40(a2)
+	sw t5, 44(a2)
+	sw t6, 48(a2)
+	sw ra, 52(a2)
 	
 	# decodifica a causa da interrupção
-	csrr a1, mcause # lê a causa da exceção e trata de
+	
+	csrr a6, mcause # lê a causa da exceção e trata de
 					# acordo com a causa
 
 	# Desvio de fluxo
-	bge a1, zero, handler_syscalls
+
+	bge a6, zero, handler_syscalls
 	j handler_interrupcoes
 
 	###### Tratador de interrupcoes ######
@@ -37,7 +38,7 @@ int_handler:
 		li t0, 0xFFFF0100
 		li t1, 0xFFFF0104
 		li t2, 1
-		li t3, 1000
+		li t3, 100
 
 		lw t4, 0(t0)
 		lw t5, 0(t1)
@@ -56,7 +57,7 @@ int_handler:
 			# adicionar 100 no count_time
 			la t6, count_time
 			lw a1, 0(t6)
-			addi a1, a1, 1000
+			addi a1, a1, 100
 			sw a1, 0(t6)
 
 			# colocar 100 no t0 (sw t3, 0(t0))
@@ -66,22 +67,21 @@ int_handler:
 			
 
 		saida_interrupcoes:
-			lw ra, 56(a0)
-			lw t6, 52(a0)
-			lw t5, 48(a0)
-			lw t4, 44(a0)
-			lw t3, 40(a0)
-			lw t2, 36(a0)
-			lw t1, 32(a0)
-			lw t0, 28(a0)
-			lw a7, 24(a0)
-			lw a6, 20(a0)
-			lw a5, 16(a0)
-			lw a4, 12(a0)
-			lw a3, 8(a0)
-			lw a2, 4(a0)
-			lw a1, 0(a0)
-			csrrw a0, mscratch, a0
+			lw ra, 52(a2)
+			lw t6, 48(a2)
+			lw t5, 44(a2)
+			lw t4, 40(a2)
+			lw t3, 36(a2)
+			lw t2, 32(a2)
+			lw t1, 28(a2)
+			lw t0, 24(a2)
+			lw a7, 20(a2)
+			lw a6, 26(a2)
+			lw a5, 12(a2)
+			lw a4, 8(a2)
+			lw a3, 4(a2)
+			lw a1, 0(a2)
+			csrrw a2, mscratch, a2
 		mret
 
 	# ATENÇÃO: DEPOIS DO TRATAMENTO DE SYSCALLS, 
@@ -159,7 +159,7 @@ int_handler:
 				# <
 				blt a1, t1, erro_servo
 				blt t2, a1, erro_servo
-				sw t3,0(a1)
+				sb a1,0(t3)
 				li a0, 0
 				j final
 
@@ -171,7 +171,7 @@ int_handler:
 				# <
 				blt a1, t1, erro_servo
 				blt t2, a1, erro_servo
-				sw t3,0(a1)
+				sb a1,0(t3)
 				li a0, 0
 				j final
 
@@ -183,7 +183,7 @@ int_handler:
 				# <
 				blt a1, t1, erro_servo
 				blt t2, a1, erro_servo
-				sw t3,0(a1)
+				sb a1,0(t3)
 				li a0, 0
 				j final
 
@@ -366,22 +366,21 @@ int_handler:
 
 		final:
 			# Restaura contexto
-			lw ra, 56(a0)
-			lw t6, 52(a0)
-			lw t5, 48(a0)
-			lw t4, 44(a0)
-			lw t3, 40(a0)
-			lw t2, 36(a0)
-			lw t1, 32(a0)
-			lw t0, 28(a0)
-			lw a7, 24(a0)
-			lw a6, 20(a0)
-			lw a5, 16(a0)
-			lw a4, 12(a0)
-			lw a3, 8(a0)
-			lw a2, 4(a0)
-			lw a1, 0(a0)
-			csrrw a0, mscratch, a0
+			lw ra, 52(a2)
+			lw t6, 48(a2)
+			lw t5, 44(a2)
+			lw t4, 40(a2)
+			lw t3, 36(a2)
+			lw t2, 32(a2)
+			lw t1, 28(a2)
+			lw t0, 24(a2)
+			lw a7, 20(a2)
+			lw a6, 16(a2)
+			lw a5, 12(a2)
+			lw a4, 8(a2)
+			lw a3, 4(a2)
+			lw a1, 0(a2)
+			csrrw a2, mscratch, a2
 
 
 			csrr t0, mepc  # carrega endereÃ§o de retorno (endereÃ§o da instruÃ§Ã£o que invocou a syscall)
@@ -431,16 +430,28 @@ _start:
 	# PERGUNTAR:
 	la t0, main   # Grava o endereço do rótulo user
 	csrw mepc, t0 # no registrador mepc
-
 	# Configurar o GPT para gerar interrupção após 100 ms; <-
 	li t0,0xFFFF0100
-	li t1,1000 # t = 1000 ms
-	#sw t1,0(t0)
+	li t1,100 # t = 100 ms
+	#sw t1,0(t0) # aqui liga/desliga GTP comentando
 
 
 	# Configurar o torque dos dois motores para zero;
-
+	li t1,0
+	li t2,0xFFFF001A
+	sw t1,0(t2)
+	li t2,0xFFFF0018
+	sw t1,0(t2)
 	# Configurar as articulações da cabeça do Uóli para a posição natural (Base = 31, Mid = 80, Top = 78);
+	li t0,31
+	li t1,80
+	li t2,78
+	li t3,0xFFFF001C # motor 3 - cabeca
+	li t4,0xFFFF001D # motor 2 - pesoco
+	li t5,0xFFFF001E # motor 1 - base
+	sw t0,0(t5)
+	sw t1,0(t4)
+	sw t2,0(t3)
 
 	mret # PC <= MEPC; MIE <= MPIE; Muda modo para MPP
 

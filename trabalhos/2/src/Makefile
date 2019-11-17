@@ -27,3 +27,6 @@ soul.o: soul.s
 
 clean:
 	rm *.o *.x
+
+gdb: bridge.py uoli.x
+	riscv32-unknown-elf-gdb uoli.x -ex 'target remote | python3 bridge.py'

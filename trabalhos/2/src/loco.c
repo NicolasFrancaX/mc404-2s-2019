@@ -3,12 +3,9 @@
 #include <stdlib.h>
 
 int main() {
-
-    set_engine_torque(0, 10);
-    set_engine_torque(1, 10);
-
-    while(1){
-    }
-
+    char i;
+   set_engine_torque(0,20);
+   set_engine_torque(1,20);
+    //while(1){}
     return 0;
 }

@@ -21,22 +21,49 @@ set_torque:
     mv t1,a1
     li a0,0
     mv a1,t0
-
-
+    
+    # empilha os regs
+    addi sp, sp, -16
+    sw t0, 0(sp)
+    sw t1, 4(sp)
+    sw t2, 8(sp)
+    sw ra, 12(sp)
+    
     jal set_engine_torque
+    
+    #desempilha os regs
+    lw ra, 12(sp)
+    lw t2, 8(sp)
+    lw t1, 4(sp)
+    lw t0, 0(sp)
+    addi sp, sp, 16
+    
     beq t2,a0,erro_torque
     li a0,1
     mv a1,t1
+    
+     # empilha os regs
+    addi sp, sp, -16
+    sw t0, 0(sp)
+    sw t1, 4(sp)
+    sw t2, 8(sp)
+    sw ra, 12(sp)
+
     jal set_engine_torque
+
+     #desempilha os regs
+    lw ra, 12(sp)
+    lw t2, 8(sp)
+    lw t1, 4(sp)
+    lw t0, 0(sp)
+    addi sp, sp, 16
+    
     beq t2,a0,erro_torque
     ret
     erro_torque:
     li a0,-1
     ret
 
-    # Chamar syscall 18 para motor 2; a0 = 1; a1 = a1
-
-    ret
 
 # Parâmetros
 # a0: id do motor (0 ou 1)

@@ -4,8 +4,8 @@
 
 int main() {
     char i;
-   set_engine_torque(0,20);
-   set_engine_torque(1,20);
-    //while(1){}
+    set_torque(30,30);
+
+    while(1){}
     return 0;
 }

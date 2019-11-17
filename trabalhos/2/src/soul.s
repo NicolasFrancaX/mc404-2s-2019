@@ -209,12 +209,12 @@ int_handler:
 			j final
 			engine1:
 				li t1,0xFFFF001A
-				sw a1,0(t1)
+				sh a1,0(t1)
 				li a0,0
 				j final
 			engine2:
 				li t1,0xFFFF0018
-				sw a1,0(t1)
+				sh a1,0(t1)
 				li a0,0
 				j final
 			j final

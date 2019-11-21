@@ -118,7 +118,7 @@ int_handler:
 			# Atribuindo valor = 0 em 0xFFFF0020
 			li t1, 0
 			li t2, 0xFFFF0020
-			sw t2, 0(t1)	
+			sw t1, 0(t2)	
 
 			# Esperando o valor de 0xFFFF0020 ser igual a 1
 			volta:
@@ -228,7 +228,7 @@ int_handler:
 			# x, y e z estao salvos em uma struct e sao armazenadas em enderecos consecutivos na memoria
 			li t1,0xFFFF0004 
 			li t2,0
-			sw t1,0(t2)
+			sw t2,0(t1)
 			li t4,0
 			loop_gps:
 				li t2,1
@@ -237,14 +237,17 @@ int_handler:
 				j loop_gps
 			cont_gps:
 				li t1,0xFFFF0008 # endereco do valor de X lido pelo gps
+				lw t1, 0(t1)
 				li t2,0xFFFF000C # endereco do valor de Y lido pelo gps
+				lw t2, 0(t2)
 				li t3,0xFFFF0010 # endereco do valor de Z lido pelo gps
+				lw t3, 0(t3)
 				mv t4,a0
 				addi t5,t4,4
 				addi t6,t4,8
-				sw t4,0(t1)
-				sw t5,0(t2)
-				sw t6,0(t3)
+				sw t1,0(t4)
+				sw t2,0(t5)
+				sw t3,0(t6)
 				j final
 
 		# Parâmetros
@@ -255,7 +258,7 @@ int_handler:
 		read_gyroscope:
 			li t1,0
 			li t2,0xFFFF0004
-			sw t2,0(t1)
+			sw t1,0(t2)
 			loop_gyro:
 				li t1,1
 				lw t3,0(t2)
@@ -279,9 +282,9 @@ int_handler:
 				mv t4,a0
 				addi t5,t4,4
 				addi t6,t4,8
-				sw t4,0(t1)
-				sw t5,0(t2)
-				sw t6,0(t3)
+				sw t1,0(t4)
+				sw t2,0(t5)
+				sw t3,0(t6)
 
 			j final
 

@@ -35,8 +35,8 @@ int_handler:
 	handler_interrupcoes:
 		# Aqui vamos configurar o gpt
 
-		li t0, 0xFFFF0100
-		li t1, 0xFFFF0104
+		li t0, 0xFFFF0100 # se =0,n gera interrup, se >0, espera o tempo
+		li t1, 0xFFFF0104 # 1= interrup n tratada, 0 = interrup tratada
 		li t2, 1
 		li t3, 100
 
@@ -436,7 +436,7 @@ _start:
 	# Configurar o GPT para gerar interrupção após 100 ms; <-
 	li t0,0xFFFF0100
 	li t1,100 # t = 100 ms
-	#sw t1,0(t0) # aqui liga/desliga GTP comentando
+	sw t1,0(t0) # aqui liga/desliga GTP comentando
 
 
 	# Configurar o torque dos dois motores para zero;

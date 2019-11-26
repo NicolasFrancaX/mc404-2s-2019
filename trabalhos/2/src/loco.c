@@ -1,5 +1,4 @@
 #include "api_robot.h"
-#include <stdio.h>
 #include <stdlib.h>
 int abs(int x){
     if(x<0)
@@ -94,25 +93,55 @@ void espera(int valor){
 void rotaciona(int angulo){
     Vector3 uoli;
     get_gyro_angles(&uoli);
-    if(angulo > 355|| angulo <5){
+    if(angulo > 350|| angulo <10){
         return;
     }
-    while( uoli.y < angulo-5 || uoli.y > angulo+ 5){
-        if(uoli.y > 180){
+    if(uoli.y>180){
+         while( uoli.y < angulo-10 || uoli.y > angulo+ 10){
             girar_esquerda(5);
+            espera(300);
+            get_gyro_angles(&uoli);
         }
-        else{
-            girar_direita(5);
-        }
-        espera(1000);
-        get_gyro_angles(&uoli);
     }
-
+    else{
+        while( uoli.y < angulo-10 || uoli.y > angulo+ 10){
+            girar_direita(5);
+            espera(300);
+            get_gyro_angles(&uoli);
+        }
+    }
 }
 int main() {
-    int i;
+    int i,quadrante_anteriror=0;
+    //char c;
     Vector3 amigo_i,uoli;
-    rotaciona(45);
+    for(i=0;i<5;i++){
+        amigo_i = friends_locations[i];
+        while(!encontrar_amigo(amigo_i)){
+            //c = (char)quadrante_anteriror;
+            //puts(&c);
+            if(quadrante(amigo_i)==quadrante_anteriror){
+                
+            }
+            else if(quadrante(amigo_i)==4){
+                rotaciona(225);
+            }
+            else if(quadrante(amigo_i)==3){
+                rotaciona(135);
+            }
+            else if(quadrante(amigo_i)==2){
+                rotaciona(45);
+            }
+            else{
+                rotaciona(315);
+            }
+            set_torque(20,20);
+            espera(2000);
+            set_torque(0,0);
+            espera(2000);
+            
+        }
+    }
     while(1){}
     return 0;
 }

@@ -6,6 +6,28 @@ int abs(int x){
         return -x;
     return x;
 }
+double sqrt(int x){
+    double temp,saida;
+    saida = x/2;
+    temp=0;
+    while(saida != temp){
+        temp = saida;
+        saida = (x/temp + temp)/2;
+    }
+    return saida;
+}
+int pow(int num, int p){
+    int i,saida=1;
+    for(i=0;i<p;i++){
+        saida = saida * num;
+    }
+    return saida;
+}
+double cos(int x1,int y1, int x2, int y2){
+    double saida;
+    saida = ((x1*x2)+(y1*y2))/(sqrt( pow(x1,2)+pow(y1,2))*sqrt(pow(x2,2)+pow(y2,2)));
+    return saida;
+}
 int encontrar_amigo(Vector3 amigo){
     Vector3 uoli;
     get_current_GPS_position(&uoli);
@@ -38,7 +60,7 @@ void girar_direita(int valor){
     final = atual + valor;
     if(final>360)
         final -=360;
-    while(atual<final-20 || atual> final+20){
+    while(atual<final || atual> final){
         set_torque(10,-10);
         get_gyro_angles(&angulo_uoli);
         atual = angulo_uoli.y;
@@ -48,12 +70,13 @@ void girar_direita(int valor){
 void girar_esquerda(int valor){
     Vector3 angulo_uoli;
     int atual,final;
+
     get_gyro_angles(&angulo_uoli);
     atual = angulo_uoli.y;
     final = atual - valor;
     if(final>360)
         final -=360;
-    while(atual<final-20 || atual> final+20){
+    while(atual<final|| atual> final){
         set_torque(-10,10);
         get_gyro_angles(&angulo_uoli);
         atual = angulo_uoli.y;
@@ -68,23 +91,28 @@ void espera(int valor){
         time = get_time();
     }
 }
+void rotaciona(int angulo){
+    Vector3 uoli;
+    get_gyro_angles(&uoli);
+    if(angulo > 355|| angulo <5){
+        return;
+    }
+    while( uoli.y < angulo-5 || uoli.y > angulo+ 5){
+        if(uoli.y > 180){
+            girar_esquerda(5);
+        }
+        else{
+            girar_direita(5);
+        }
+        espera(1000);
+        get_gyro_angles(&uoli);
+    }
+
+}
 int main() {
     int i;
-    Vector3 amigo_i;
-    
-    espera(3000);
-    for(i=0;i<5;i++){
-        amigo_i = friends_locations[i];
-        while(!encontrar_amigo(amigo_i)){
-            if(quadrante(amigo_i)==4) girar_esquerda(45);
-            else if(quadrante(amigo_i)==3) girar_direita(45);
-            else if(quadrante(amigo_i)==2) girar_direita(135);
-            else girar_esquerda(135);
-            espera(2000);
-            set_torque(10,10);
-            espera(2000);
-        }
-    }
+    Vector3 amigo_i,uoli;
+    rotaciona(45);
     while(1){}
     return 0;
 }

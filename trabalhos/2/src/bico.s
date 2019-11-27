@@ -144,19 +144,26 @@ set_time:
 
 puts:
     # aqui temos que definir o tamanho da string e salvar em a2
+    mv a1, a0 # a1 = endereco 
+    li a0, 1
+
+    li a2, 0
+
+    while:
+        add t1, a1, a2
+        lb t1, 0(t1)
+
+        beq zero, t1, sair_while
+
+        #li t5, 3
+        #beq t5, t1, sair_while
+
+        addi a2, a2, 1
+        j while 
+    sair_while:
+
     li a7, 64
-    mv a1, a0 # a1 = enredeco 
-    mv t0, a0
-    li a0, 1 # output 
-    li t1, 0
-    loop_string:
-        # ler os bytes ate achar o \0
-        add t0, t0, t1
-        lb t2, 0(t0) 
-        addi t1, t1, 1
-        # checar se t1 encosta no tamanho maximo
-        bne t2, zero, loop_string
-    mv a2,t1
     ecall
+
 
     ret

@@ -4,21 +4,21 @@
 
 int_handler:
 	# salvar contexto
-	csrrw a2, mscratch, a2
-	sw a1, 0(a2)
-	sw a3, 4(a2)
-	sw a4, 8(a2)
-	sw a5, 12(a2)
-	sw a6, 16(a2)
-	sw a7, 20(a2)
-	sw t0, 24(a2)
-	sw t1, 28(a2)
-	sw t2, 32(a2)
-	sw t3, 36(a2)
-	sw t4, 40(a2)
-	sw t5, 44(a2)
-	sw t6, 48(a2)
-	sw ra, 52(a2)
+	csrrw a4, mscratch, a4
+	sw a1, 0(a4)
+	sw a3, 4(a4)
+	sw a2, 8(a4)
+	sw a5, 12(a4)
+	sw a6, 16(a4)
+	sw a7, 20(a4)
+	sw t0, 24(a4)
+	sw t1, 28(a4)
+	sw t2, 32(a4)
+	sw t3, 36(a4)
+	sw t4, 40(a4)
+	sw t5, 44(a4)
+	sw t6, 48(a4)
+	sw ra, 52(a4)
 	
 	# decodifica a causa da interrupção
 	
@@ -67,21 +67,21 @@ int_handler:
 			
 
 		saida_interrupcoes:
-			lw ra, 52(a2)
-			lw t6, 48(a2)
-			lw t5, 44(a2)
-			lw t4, 40(a2)
-			lw t3, 36(a2)
-			lw t2, 32(a2)
-			lw t1, 28(a2)
-			lw t0, 24(a2)
-			lw a7, 20(a2)
-			lw a6, 26(a2)
-			lw a5, 12(a2)
-			lw a4, 8(a2)
-			lw a3, 4(a2)
-			lw a1, 0(a2)
-			csrrw a2, mscratch, a2
+			lw ra, 52(a4)
+			lw t6, 48(a4)
+			lw t5, 44(a4)
+			lw t4, 40(a4)
+			lw t3, 36(a4)
+			lw t2, 32(a4)
+			lw t1, 28(a4)
+			lw t0, 24(a4)
+			lw a7, 20(a4)
+			lw a6, 26(a4)
+			lw a5, 12(a4)
+			lw a2, 8(a4)
+			lw a3, 4(a4)
+			lw a1, 0(a4)
+			csrrw a4, mscratch, a4
 		mret
 
 	# ATENÇÃO: DEPOIS DO TRATAMENTO DE SYSCALLS, 
@@ -313,51 +313,43 @@ int_handler:
 		# a0: Número de bytes efetivamente escritos. 
 		write:
 			# Se a0 = 0, POR ENQUANTO sair!
-			li t1,1
+			li t1, 1
 			bne a0, t1, nao_deveria_ser_stdin
 
-			# a0 = 1 => stdout
+			li t0, 0
 
-			# 0xFFFF0108
-			# Quando atribuído valor 1, a UART inicia a transmissão do valor armazenado em 0xFFFF0109.
-			# Quando a transmissão terminar e a UART estiver pronta para iniciar a transmissão de um novo byte, o valor 0 é atribuído ao registrador. 
+			while:
+				beq t0, a2, sair_while
 
-			# 0xFFFF0109
-			# Valor a ser transmitido pela UART. 
+				# Aqui vamos colocar a transmissão da UART
+				add t2, a1, t0
+				lb t2, 0(t2)
 
-			# t0 := base do endereco
-			# t1 := contador
+				# Iniciando a transmissão na UART
+				li t3, 0xFFFF0108
+				sb t1, 0(t3)
 
-			li t1, 0 
-
-			li t5, 0
-			
-			addi t5, a2, 0
-
-			li t2, 0xFFFF0109
-
-			loop:
-				beq t1, a2, sair_loop
-
-				# Queremos o caracter
-				add t5,t5,t1
-				mv t4, t5
-
+				# Jogando valor
+				li t4, 0xFFFF0109
 				sb t2, 0(t4)
 
-				loop2: 
-					# UART
-					li t3, 0xFFFF0108
-					lb t3, 0(t3)
+				# Espera da UART
+				while_uart:
+					li t5, 0xFFFF0108
+					lb t6, 0(t5)
 
-					beq t3, zero, loop2 # Se t3 = 0, sai da transmissao
+					beq t6, zero, sair_while_uart
+					j while_uart
 
-				addi t1, t1, 1 # contador++
-				j loop
+					sair_while_uart:
 
-			sair_loop:
 
-			mv a0, t1
+				addi t0, t0, 1
+				j while
+				sair_while:
+
+			sb zero,0(t3)
+			mv a0, t0
 
 			j final
 
@@ -369,21 +361,21 @@ int_handler:
 
 		final:
 			# Restaura contexto
-			lw ra, 52(a2)
-			lw t6, 48(a2)
-			lw t5, 44(a2)
-			lw t4, 40(a2)
-			lw t3, 36(a2)
-			lw t2, 32(a2)
-			lw t1, 28(a2)
-			lw t0, 24(a2)
-			lw a7, 20(a2)
-			lw a6, 16(a2)
-			lw a5, 12(a2)
-			lw a4, 8(a2)
-			lw a3, 4(a2)
-			lw a1, 0(a2)
-			csrrw a2, mscratch, a2
+			lw ra, 52(a4)
+			lw t6, 48(a4)
+			lw t5, 44(a4)
+			lw t4, 40(a4)
+			lw t3, 36(a4)
+			lw t2, 32(a4)
+			lw t1, 28(a4)
+			lw t0, 24(a4)
+			lw a7, 20(a4)
+			lw a6, 26(a4)
+			lw a5, 12(a4)
+			lw a2, 8(a4)
+			lw a3, 4(a4)
+			lw a1, 0(a4)
+			csrrw a4, mscratch, a4
 
 
 			csrr t0, mepc  # carrega endereÃ§o de retorno (endereÃ§o da instruÃ§Ã£o que invocou a syscall)
@@ -436,7 +428,7 @@ _start:
 	# Configurar o GPT para gerar interrupção após 100 ms; <-
 	li t0,0xFFFF0100
 	li t1,100 # t = 100 ms
-	sw t1,0(t0) # aqui liga/desliga GTP comentando
+	#sw t1,0(t0) # aqui liga/desliga GTP comentando
 
 
 	# Configurar o torque dos dois motores para zero;

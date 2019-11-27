@@ -138,6 +138,7 @@ void rotaciona(int angulo){
 
 int main() {
     int i;
+    char c;
     int quadrante_anterior = 0;
     //char c;
     Vector3 amigo_i, uoli;
@@ -145,9 +146,15 @@ int main() {
     for(i = 0; i < 5; i++){
         amigo_i = friends_locations[i];
 
+        puts("Teste\n");
+
         while (!encontrar_amigo(amigo_i)) {
             //c = (char)quadrante_anterior;
             //puts(&c);
+            c = (char)(48 + quadrante(amigo_i));
+            puts(&c); 
+            puts("\nproximo\n");    
+            //aqui da erro //      
             if (quadrante(amigo_i) == quadrante_anterior) {
                 // miss...
             } else if (quadrante(amigo_i) == 4) {
